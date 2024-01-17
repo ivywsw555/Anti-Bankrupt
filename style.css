@@ -1,0 +1,200 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eaeaea;
+    color: #333;
+    line-height: 1.6;
+    font-size: 16px;
+    /* Base font size */
+}
+
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+    padding: 20px;
+    min-height: 100vh;
+    /* Ensure it covers the full viewport height */
+    width: 100%;
+    justify-content: center;
+    box-sizing: 15px;
+}
+
+.inline-display {
+    display: inline-block;
+    vertical-align: center;
+    margin-right: 10px;
+}
+
+.container {
+    flex: 0 0 23%;
+    padding: 10px;
+}
+
+.haha {
+    flex: 0 0 77%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#savingsChart {
+    justify-content: center;
+    width: 100%;
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 48%;
+}
+
+.input-group:last-child {
+    margin-right: 0;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.40rem;
+    margin: 0.3rem
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #555;
+    font-weight: bold;
+    font-size: 0.9rem;
+    /* Relative font size */
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    /* margin:5px; */
+    margin-bottom: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+select {
+    width: 100%;
+    padding: 5px;
+    /* margin:5px; */
+    margin-bottom: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.gradient-hover-effect {
+    display: flex;
+    padding: 1rem 3rem;
+    background: linear-gradient(90deg, #da60c6, transparent) #e7df68;
+    font-family: inherit;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 1s;
+    place-content: center;
+}
+
+.gradient-hover-effect:hover,
+.gradient-hover-effect:focus {
+    background-color: #d385bb;
+    color: #fff;
+    box-shadow: 0 0 5px #ffffff
+}
+
+
+
+.medium-btn {
+    display: inline-flex;
+    width: 100%;
+    height: 3rem;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    border-radius: 1rem;
+    border: 2px solid #f4f4f4;
+    font-weight: 700;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    /* margin-left: 2rem;
+    margin-right: 2rem; */
+}
+
+
+
+@media (max-width: 768px) {
+
+    .main-container {
+        display: block;
+        min-height: unset;
+        height: auto;
+        padding: 0;
+    }
+
+    .container {
+        width: 100%;
+
+    }
+
+    .haha {
+        width: 100%;
+    }
+
+
+    .container {
+        font-size: 14px;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .haha {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    #savingsChart {
+        width: 100%;
+        height: auto;
+        margin-top: 15px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+}

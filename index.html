@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Retirement and House Buying Planner</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="container">
+            <h2>Anti-Bankrupt and Ret. Planner</h2>
+            <div style="font-style: italic;color:blueviolet">
+                <label for="savingsAtRetirement" class="inline-display"
+                    style="font-size: medium;font-style: italic;color:blueviolet">Savings at
+                    Retirement:</label>
+                <div id="savingsAtRetirement" class="inline-display">-</div>
+                <label for="bankruptatAge" class="inline-display"
+                    style="font-size: medium;font-style: italic;color:blueviolet">Happy Bankrupt at
+                    Age:</label>
+                <div id="bankruptatAge" class="inline-display" style="font-style: italic;color:blueviolet">-</div>
+            </div>
+            <!-- <div>
+            </div> -->
+            <form id="plannerForm">
+                <!-- <div class="row"> -->
+                <div>
+                    <div class="input-row">
+                        <div class="input-group">
+
+                            <label for="currentAge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                    <path
+                                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                </svg> Current Age:</label>
+                            <input type="number" class="form-control" id="currentAge" name="currentAge" min="0"
+                                value="25">
+                        </div>
+                        <div class="input-group">
+
+                            <label for="retirementAge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                                    <path
+                                        d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                                </svg> Target Ret. Age :</label>
+                            <input type="number" class="form-control" id="retirementAge" name="retirementAge" min="0"
+                                max="65" value="65">
+                            <div id="retirementAgeWarning" style="display:none; color: red;">Retirement age cannot
+                                exceed 65.</div>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+
+                            <label for="retirementDesiredMoneyAmount"> <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" fill="currentColor" class="bi bi-bank" viewBox="0 0 16 16">
+                                    <path
+                                        d="m8 0 6.61 3h.89a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H15v7a.5.5 0 0 1 .485.38l.5 2a.498.498 0 0 1-.485.62H.5a.498.498 0 0 1-.485-.62l.5-2A.5.5 0 0 1 1 13V6H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 3h.89zM3.777 3h8.447L8 1zM2 6v7h1V6zm2 0v7h2.5V6zm3.5 0v7h1V6zm2 0v7H12V6zM13 6v7h1V6zm2-1V4H1v1zm-.39 9H1.39l-.25 1h13.72z" />
+                                </svg> Savings Goal ($):</label>
+                            <input type="number" class="form-control" id="retirementDesiredMoneyAmount"
+                                name="retirementDesiredMoneyAmount" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+
+                            <label for="currentSavings"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-wallet-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M1.5 2A1.5 1.5 0 0 0 0 3.5v2h6a.5.5 0 0 1 .5.5c0 .253.08.644.306.958.207.288.557.542 1.194.542s.987-.254 1.194-.542C9.42 6.644 9.5 6.253 9.5 6a.5.5 0 0 1 .5-.5h6v-2A1.5 1.5 0 0 0 14.5 2z" />
+                                    <path
+                                        d="M16 6.5h-5.551a2.7 2.7 0 0 1-.443 1.042C9.613 8.088 8.963 8.5 8 8.5s-1.613-.412-2.006-.958A2.7 2.7 0 0 1 5.551 6.5H0v6A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5z" />
+                                </svg> Current Savings ($):</label>
+                            <input type="number" class="form-control" id="currentSavings" name="currentSavings" min="0"
+                                value="0">
+                        </div>
+                    </div>
+
+                    <label for="monthlyIncome"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" class="bi bi-cash" viewBox="0 0 16 16">
+                            <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                            <path
+                                d="M0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V6a2 2 0 0 1-2-2z" />
+                        </svg> Monthly Pre-tax Income ($):</label>
+                    <input type="number" class="form-control" id="monthlyIncome" name="monthlyIncome" min="0"
+                        value="7000">
+
+                    <div class="input-row">
+                        <div class="input-group">
+
+                            <label for="taxPlace">Tax Place:</label>
+                            <select class="form-control" id="taxPlace" name="taxPlace">
+                                <option value="California">California</option>
+                                <!-- <option value="Texas">Texas</option> -->
+                                <option value="Shanghai">Shanghai</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+
+                            <label for="taxStatus">Filling Status:</label>
+                            <select class="form-control" id="taxStatus" name="taxStatus">
+                                <option value="Single">Single</option>
+                                <!-- <option value="Texas">Texas</option> -->
+                                <option value="Married Filing Jointly">Married Filing Jointly</option>
+                                <option value="Married Filing Seperately">Married Filing Seperately</option>
+                                <option value="Head of Household">Head of Household</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+
+                            <label for="salaryIncreaseRate">Annual Salary Growth Rate (%):</label>
+                            <input type="number" class="form-control" id="salaryIncreaseRate" name="salaryIncreaseRate"
+                                min="0" step="0.01" value="3">
+
+                        </div>
+                        <div class="input-group">
+                            <label for="healthFactor">Annual Health-Related Expenses ($):</label>
+                            <input type="number" class="form-control" id="healthFactor" name="healthFactor" min="0"
+                                value="0">
+                        </div>
+                    </div>
+                    <!-- </div>
+                <div> -->
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="savingsInterestRate"> Savings Int. Rate (%):</label>
+                            <input type="number" class="form-control" id="savingsInterestRate"
+                                name="savingsInterestRate" min="0" step="0.01" value="3">
+                        </div>
+                        <!-- <div class="input-group">
+                            <label for="taxRate">Tax Rate (%):</label>
+                            <input type="number" class="form-control" id="taxRate" name="taxRate" min="0" value="3">
+                        </div> -->
+                        <div class="input-group">
+
+                            <label for="inflationRate">Inflation (%):</label>
+                            <input type="number" class="form-control" id="inflationRate" name="inflationRate" min="0"
+                                step="0.01" value="2">
+                        </div>
+
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="monthlyExpenses">Monthly Living Expenses ($):</label>
+                            <input type="number" class="form-control" id="monthlyExpenses" name="monthlyExpenses"
+                                min="0" value="1100">
+                        </div>
+                        <div class="input-group">
+                            <label for="monthlyRentalExpenses">Monthly Rent Expenses ($):</label>
+                            <input type="number" class="form-control" id="monthlyRentalExpenses"
+                                name="monthlyRentalExpenses" min="0" value="1300">
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <!-- </div>
+                <div> -->
+                    <label for="buyHouseCheckbox"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                            <path
+                                d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+                        </svg> Buy House?</label>
+                    <input type="checkbox" id="buyHouseCheckbox" name="buyHouseCheckbox"
+                        onchange="toggleHouseOptions()">
+
+                    <div id="houseOptions" style="display: none;">
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="housePrice">Purchase Price ($):</label>
+                                <input type="number" class="form-control" id="housePrice" name="housePrice" min="0"
+                                    value="1000000">
+                            </div>
+                            <div class="input-group">
+                                <label for="houseDownPayment">Down Payment (%):</label>
+                                <input type="number" class="form-control" id="houseDownPayment" name="houseDownPayment"
+                                    min="0" value="20">
+                            </div>
+                        </div>
+
+
+                        <label for="mortgageRate">Mortg. Rate (%):</label>
+                        <input type="number" class="form-control" id="mortgageRate" name="mortgageRate" min="0"
+                            step="0.01" value="4">
+                        <label for="mortgageTerm">Mortg. Term (years):</label>
+                        <input type="number" class="form-control" id="mortgageTerm" name="mortgageTerm" min="0"
+                            step="0.01" value="30">
+                        <label for="houseBuyingAge">Purchase Age (years):</label>
+                        <input type="number" class="form-control" id="houseBuyingAge" name="houseBuyingAge" min="0"
+                            value="35">
+                    </div>
+
+                    <label for="childCheckbox">Raise Child?</label>
+                    <input type="checkbox" id="childCheckbox" name="childCheckbox" onchange="toggleChildOptions()">
+
+                    <div id="childOptions" style="display: none;">
+                        <label for="childCost">Cost ($):</label>
+                        <input type="number" class="form-control" id="childCost" name="childCost" min="0" value="1000">
+                    </div>
+                </div>
+                <!-- </div> -->
+
+                <button type="button" class="medium-btn gradient-hover-effect"
+                    onclick="calculateFinancialSituation()">Bankrupt?</button>
+
+
+            </form>
+        </div>
+
+        <div class="haha">
+
+            <canvas id="savingsChart"></canvas>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+
+</body>
