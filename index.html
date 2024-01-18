@@ -16,15 +16,39 @@
         <div class="container">
             <h2>Anti-Bankrupt and Ret. Planner</h2>
             <div style="font-style: italic;color:blueviolet">
-                <label for="savingsAtRetirement" class="inline-display"
-                    style="font-size: medium;font-style: italic;color:blueviolet">Savings at
-                    Retirement:</label>
-                <div id="savingsAtRetirement" class="inline-display">-</div>
-                <label for="bankruptatAge" class="inline-display"
-                    style="font-size: medium;font-style: italic;color:blueviolet">Happy Bankrupt at
-                    Age:</label>
-                <div id="bankruptatAge" class="inline-display" style="font-style: italic;color:blueviolet">-</div>
+                <div style="display: block;">
+                    <label for="savingsAtRetirement" class="inline-display"
+                        style="font-size: small;font-style: italic;color:blueviolet;margin:0">Savings at
+                        Retirement With House:</label>
+                    <div id="savingsAtRetirement" class="inline-display"
+                        style="font-style: italic;color:blueviolet;margin:0">-</div>
+                </div>
+                <div style="display: block;">
+
+                    <label for="bankruptatAge" class="inline-display"
+                        style="font-size: small;font-style: italic;color:rgb(226, 43, 171);margin:0">Happy Bankrupt at
+                        Age With House:</label>
+                    <div id="bankruptatAge" class="inline-display"
+                        style="font-style: italic;color:rgb(226, 43, 171);margin:0">-</div>
+
+
+                </div>
+                <div style="display: block;">
+                    <label for="savingsAtRetirementWithoutHouse" class="inline-display"
+                        style="font-size: small;font-style: italic;color:blueviolet;margin:0">Savings Without
+                        House:</label>
+                    <div id="savingsAtRetirementWithoutHouse" class="inline-display">-</div>
+                </div>
+                <div style="display: block;">
+                    <label for="bankruptatAgeWithoutHouse" class="inline-display"
+                        style="font-size: small;font-style: italic;color:rgb(226, 43, 171);margin:0">Without
+                        House:</label>
+                    <div id="bankruptatAgeWithoutHouse" class="inline-display"
+                        style="font-style: italic;color:rgb(226, 43, 171);margin:0">-
+                    </div>
+                </div>
             </div>
+
             <!-- <div>
             </div> -->
             <form id="plannerForm">
@@ -161,7 +185,9 @@
                         </div>
                     </div>
 
-
+                    <label for="yearlyTravelExpenses">Yealy Travel Expenses ($):</label>
+                    <input type="number" class="form-control" id="yearlyTravelExpenses" name="yearlyTravelExpenses"
+                        min="0" value="3000">
 
 
 
