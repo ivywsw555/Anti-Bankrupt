@@ -12,14 +12,22 @@ function addInputEventListeners() {
         input.addEventListener('change', calculateFinancialSituation);
     });
 }
-function updateChart(financialSituation) {
+function update3Chart(financialSituationWithHouse, financialSituationWithoutHouse, financialSituationWithoutHouseWithProperty) {
     var ctx = document.getElementById('savingsChart').getContext('2d');
 
-    var labels = financialSituation.map(function (item) {
+    var labels = financialSituationWithHouse.map(function (item) {
         return "Age " + item.year;
     });
 
-    var data = financialSituation.map(function (item) {
+    var dataWithHouse = financialSituationWithHouse.map(function (item) {
+        return item.savings;
+    });
+
+    var dataWithoutHouse = financialSituationWithoutHouse.map(function (item) {
+        return item.savings;
+    });
+
+    var dataWithHouseWithProperty = financialSituationWithoutHouseWithProperty.map(function (item) {
         return item.savings;
     });
 
@@ -32,10 +40,22 @@ function updateChart(financialSituation) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Total Savings Over Time',
-                data: data,
+                label: 'Total Savings With Buying House',
+                data: dataWithHouse,
                 fill: false,
                 borderColor: 'rgb(118, 15, 246)',
+                tension: 0.1
+            }, {
+                label: 'Total Savings Without Buying House',
+                data: dataWithoutHouse,
+                fill: false,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }, {
+                label: 'Total Savings With Buying House and House included',
+                data: dataWithHouseWithProperty,
+                fill: false,
+                borderColor: 'rgb(225, 115, 60)',
                 tension: 0.1
             }]
         },
@@ -77,15 +97,14 @@ function updateChart(financialSituation) {
         }
     });
 }
+function updateChart(financialSituationWithoutHouse) {
+    var ctx = document.getElementById('savingsChart').getContext('2d');
 
-function updatemonthChart(financialSituation) {
-    var ctx = document.getElementById('savingsmonthChart').getContext('2d');
-
-    var labels = financialSituation.map(function (item) {
+    var labels = financialSituationWithoutHouse.map(function (item) {
         return "Age " + item.year;
     });
 
-    var data = financialSituation.map(function (item) {
+    var dataWithoutHouse = financialSituationWithoutHouse.map(function (item) {
         return item.savings;
     });
 
@@ -94,16 +113,15 @@ function updatemonthChart(financialSituation) {
         window.mySavingsChart.destroy();
     }
 
-    // Create a new Chart instance
     window.mySavingsChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Total Savings Over Time',
-                data: data,
+                label: 'Total Savings Without Buying House',
+                data: dataWithoutHouse,
                 fill: false,
-                borderColor: 'rgb(118, 15, 246)',
+                borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
             }]
         },
@@ -124,10 +142,29 @@ function updatemonthChart(financialSituation) {
                 }
             },
             responsive: true,
-            maintainAspectRatio: true
+            maintainAspectRatio: true,
+            plugins: {
+                tooltips: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += tooltipItem.yLabel.toLocaleString();
+                            return label;
+                        }
+                    }
+                },
+            }
         }
     });
 }
+
+
 
 function toggleHouseOptions() {
     var checkbox = document.getElementById("buyHouseCheckbox");
@@ -192,17 +229,20 @@ function calculateTotalTax(monthlyIncome) {
     // console.log("Total Tax Due: $" + (taxDue + taxDueState).toFixed(2));
 
     function calculateChinaTax(income) {
-        if (income <= 36000) {
-            return income * 0.03;
-        } else if (income <= 144000) {
+        baseline = 60000;
+        if (income <= baseline) {
+            return 0;
+        } else if (income <= baseline + 36000) {
+            return income * 0.03 + 0;
+        } else if (income <= baseline + 144000) {
             return (income - 36000) * 0.1 + 1080;
-        } else if (income <= 300000) {
+        } else if (income <= baseline + 300000) {
             return (income - 144000) * 0.2 + 11880;
-        } else if (income <= 420000) {
+        } else if (income <= baseline + 420000) {
             return (income - 300000) * 0.25 + 43080;
-        } else if (income <= 660000) {
+        } else if (income <= baseline + 660000) {
             return (income - 420000) * 0.3 + 73080;
-        } else if (income <= 960000) {
+        } else if (income <= baseline + 960000) {
             return (income - 660000) * 0.35 + 145080;
         } else {
             return (income - 960000) * 0.45 + 250080;
@@ -210,17 +250,20 @@ function calculateTotalTax(monthlyIncome) {
     }
 
     function calculateTaxSingle(income) {
-        if (income <= 11600) {
+        let baseCASingle2024 = 14600;
+        if (income <= baseCASingle2024) {
+            return 0;
+        } else if (income <= baseCASingle2024 + 11600) {
             return income * 0.10;
-        } else if (income <= 47150) {
+        } else if (income <= baseCASingle2024 + 47150) {
             return 1160 + (income - 11600) * 0.12;
-        } else if (income <= 101525) {
+        } else if (income <= baseCASingle2024 + 101525) {
             return 5426 + (income - 47150) * 0.22;
-        } else if (income <= 191950) {
+        } else if (income <= baseCASingle2024 + 191950) {
             return 17168.50 + (income - 101525) * 0.24;
-        } else if (income <= 243725) {
+        } else if (income <= baseCASingle2024 + 243725) {
             return 39110.50 + (income - 191950) * 0.32;
-        } else if (income <= 609350) {
+        } else if (income <= baseCASingle2024 + 609350) {
             return 55678.50 + (income - 243725) * 0.35;
         } else {
             return 183147.25 + (income - 609350) * 0.37;
@@ -228,17 +271,21 @@ function calculateTotalTax(monthlyIncome) {
     }
 
     function calculateTaxMarriedFilingJointly(income) {
-        if (income <= 23200) {
+        let baseCAJointly2024 = 29200;
+
+        if (income <= baseCAJointly2024) {
+            return 0;
+        } else if (income <= baseCAJointly2024 + 23200) {
             return income * 0.10;
-        } else if (income <= 94400) {
+        } else if (income <= baseCAJointly2024 + 94400) {
             return 2320 + (income - 23200) * 0.12;
-        } else if (income <= 201050) {
+        } else if (income <= baseCAJointly2024 + 201050) {
             return 10852 + (income - 94400) * 0.22;
-        } else if (income <= 383900) {
+        } else if (income <= baseCAJointly2024 + 383900) {
             return 34337 + (income - 201050) * 0.24;
-        } else if (income <= 487450) {
+        } else if (income <= baseCAJointly2024 + 487450) {
             return 78281 + (income - 383900) * 0.32;
-        } else if (income <= 731200) {
+        } else if (income <= baseCAJointly2024 + 731200) {
             return 111357 + (income - 487450) * 0.35;
         } else {
             return 196669.50 + (income - 731200) * 0.37;
@@ -348,33 +395,30 @@ function calculateTotalTax(monthlyIncome) {
 }
 
 
+
 function calculateFinancialSituation() {
 
 
     const currentAge = parseInt(document.getElementById("currentAge").value);
     const retirementAge = parseInt(document.getElementById("retirementAge").value);
-    // const housePrice = parseFloat(document.getElementById("housePrice").value);
-    // const downPayment = parseFloat(document.getElementById("houseDownPayment").value);
-    // const mortgageRate = parseFloat(document.getElementById("mortgageRate").value) / 100;
-    // const mortgageTerm = parseFloat(document.getElementById("mortgageTerm").value);
     const monthlyIncome = parseFloat(document.getElementById("monthlyIncome").value);
-    // const taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
-
     const salaryIncreaseRate = parseFloat(document.getElementById("salaryIncreaseRate").value) / 100;
     const monthlyExpenses = parseFloat(document.getElementById("monthlyExpenses").value);
     const monthlyRentalExpenses = parseFloat(document.getElementById("monthlyRentalExpenses").value);
-
+    const yearlyTravelExpenses = parseFloat(document.getElementById("yearlyTravelExpenses").value);
     const inflationRate = parseFloat(document.getElementById("inflationRate").value) / 100;
     const currentSavings = parseFloat(document.getElementById("currentSavings").value);
     const savingsInterestRate = parseFloat(document.getElementById("savingsInterestRate").value) / 100;
     const healthFactor = parseFloat(document.getElementById("healthFactor").value);
-    // const houseBuyingAge = parseInt(document.getElementById("houseBuyingAge").value);
-
     const buyHouseCheckbox = document.getElementById("buyHouseCheckbox");
 
-    // const taxStatus = document.getElementById('taxStatus').value;
-    // const taxPlace = document.getElementById('taxPlace').value;
 
+    let monthlySavings = currentSavings;
+    let monthfinancialSituation = [];
+    let yearfinancialSituation = [];
+    let yearfinancialwithoutHouseSituation = [];
+    let yearfinancialSituationWithHouse = [];
+    let monthinflationRate = inflationRate / 12
 
     if (buyHouseCheckbox.checked) {
         housePrice = parseFloat(document.getElementById("housePrice").value);
@@ -383,135 +427,485 @@ function calculateFinancialSituation() {
         mortgageTerm = parseFloat(document.getElementById("mortgageTerm").value);
         houseBuyingAge = parseInt(document.getElementById("houseBuyingAge").value);
 
-    } else {
-        housePrice = 0;
-        downPayment = 0;
-        mortgageRate = 0;
-        mortgageTerm = 0;
-        houseBuyingAge = 0;
-    }
+        const mortgageEndYear = houseBuyingAge + mortgageTerm;
 
-    console.log("Current Age:", currentAge);
-    console.log("Retirement Age:", retirementAge);
-    console.log("Place:", taxPlace);
+        let mortgageTermMonths = mortgageTerm * 12;
+        let principal = housePrice * (1 - downPayment);
+        let monthlyInterestRate = mortgageRate / 12;
+        let HousePropertyTaxAfterdeduct = housePrice > 1000000 ? (housePrice - 1000000) * 0.01 : 0
+        let HOAandInsurance = 1000
+        let monthlySavingsWithHouse;
 
-    console.log("House Price:", housePrice);
-    console.log("Down Payment:", downPayment);
-    console.log("Mortgage Rate:", mortgageRate);
-    console.log("Mortgage Term:", mortgageTerm);
-    console.log("Monthly Income:", monthlyIncome);
-    console.log("Salary Increase Rate:", salaryIncreaseRate);
-    console.log("Monthly Expenses:", monthlyExpenses);
-    console.log("Inflation Rate:", inflationRate);
-    console.log("Current Savings:", currentSavings);
-    console.log("Savings Interest Rate:", savingsInterestRate);
-    console.log("Health Factor:", healthFactor);
-    console.log("House Buying Age:", houseBuyingAge);
+        flagB = 1
+        for (let year = currentAge; year <= 100; year++) {
+            let mortgagePaidPerMonth = 0;
+            let taxDeductHouse = 0;
+            let incomePerMonth;
+            let expensePerMonth;
+            if (year == houseBuyingAge) {
+                monthlySavingsWithHouse = monthlySavings + housePrice;
+            } else if (year < houseBuyingAge) {
+                monthlySavingsWithHouse = monthlySavings;
+            }
+            for (let month = 1; month <= 12; month++) {
 
+                //Expense Calculation
+                let monthlyExpenseAfterInflation = monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge) * 12 + month);
+                if (year < houseBuyingAge) {
+                    expensePerMonth = monthlyExpenseAfterInflation + monthlyRentalExpenses + healthFactor
 
-    let monthlySavings = currentSavings;
-    let monthfinancialSituation = [];
-    let yearfinancialSituation = [];
-    const mortgageEndYear = houseBuyingAge + mortgageTerm;
-
-    let mortgageTermMonths = mortgageTerm * 12;
-    let principal = housePrice * (1 - downPayment);
-    let monthlyInterestRate = mortgageRate / 12;
-    let monthinflationRate = inflationRate / 12
-
-    // let taxDeducted = monthlyIncome;
-    flagB = 1
-    for (let year = currentAge; year <= 100; year++) {
-        let mortgagePaidPerMonth = 0;
-        let incomePerMonth;
-        if (year < retirementAge) {
-            incomePerMonth = calculateTotalTax(monthlyIncome * Math.pow((1 + salaryIncreaseRate), (year - currentAge))) / 12;
-        } else {
-            incomePerMonth = 0;
-        }
-        let expensePerMonth;
+                } else if (year >= houseBuyingAge && year <= mortgageEndYear) {
+                    mortgagePaidPerMonth = principal * (monthlyInterestRate * Math.pow((1 + monthlyInterestRate), mortgageTermMonths)) / (Math.pow((1 + monthlyInterestRate), mortgageTermMonths) - 1);
+                    expensePerMonth = monthlyExpenseAfterInflation + mortgagePaidPerMonth + HousePropertyTaxAfterdeduct + HOAandInsurance + healthFactor;
+                    taxDeductHouse = housePrice > 1000000 ? 1000000 : housePrice * 0.01;
 
 
-        if (year >= houseBuyingAge && year < mortgageEndYear) {
-            mortgagePaidPerMonth = principal * (monthlyInterestRate * Math.pow((1 + monthlyInterestRate), mortgageTermMonths)) / (Math.pow((1 + monthlyInterestRate), mortgageTermMonths) - 1);
-
-            expensePerMonth = (monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge))) + mortgagePaidPerMonth + housePrice * 0.01
-
-        } else {
-            expensePerMonth = (monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge))) + mortgagePaidPerMonth + monthlyRentalExpenses;
-            mortgagePaidPerMonth = 0
-        }
-        for (let month = 1; month <= 12; month++) {
-
-            console.log(year, mortgagePaidPerMonth, expensePerMonth, incomePerMonth, monthlySavings);
-
-            if (year < retirementAge) {
-                if (year == houseBuyingAge && month == 1) {
-                    console.log(housePrice * downPayment,);
-                    if (incomePerMonth > housePrice * downPayment) {
-
-                    } else if (incomePerMonth + monthlySavings > housePrice * downPayment) {
-                        monthlySavings -= (housePrice * downPayment - incomePerMonth)
-                        incomePerMonth = 0
-                    };
+                } else if (year > mortgageEndYear) {
+                    expensePerMonth = monthlyExpenseAfterInflation + HousePropertyTaxAfterdeduct + HOAandInsurance + healthFactor;
+                    mortgagePaidPerMonth = 0;
                 }
 
-                let boolSoso = (incomePerMonth + monthlySavings) > expensePerMonth;
-                let boolNo = (incomePerMonth + monthlySavings) < expensePerMonth;
-                console.log(year, boolSoso, boolNo);
-                if (boolSoso) {
-                    monthlySavings += (incomePerMonth - expensePerMonth + ((monthlySavings * savingsInterestRate * 0.9) / 12) - healthFactor);
-                } else if (boolNo) {
-                    // console.log(year, flagB);
-                    if (flagB) {
-                        // console.log(year, flagB);
-                        document.getElementById('bankruptatAge').textContent = '' + year;
-                        flagB -= 1
-                    }
-                    // console.log(year, month, expensePerMonth, mortgagePaidPerMonth, incomePerMonth, monthlySavings);
+                if (month == 12) {
+                    expensePerMonth += yearlyTravelExpenses;
+                }
 
-                    if (monthlySavings <= 0) {
+                //Income Calculation
+                if (year < retirementAge) {
+                    incomePerMonth = calculateTotalTax((monthlyIncome * Math.pow((1 + salaryIncreaseRate / 12), (year - currentAge) * 12 + month)) + (monthlySavings * savingsInterestRate - expensePerMonth) / 12 - taxDeductHouse / 12) / 12;
+
+                    if (year == houseBuyingAge && month == 1) {
+                        if (incomePerMonth > housePrice * downPayment) {
+                            incomePerMonth -= housePrice * downPayment
+                        } else if (incomePerMonth + monthlySavings > housePrice * downPayment) {
+                            monthlySavings -= (housePrice * downPayment - incomePerMonth)
+                            monthlySavingsWithHouse -= (housePrice * downPayment - incomePerMonth)
+                            incomePerMonth = 0;
+                        };
+                    }
+
+                    // console.log(incomePerMonth + monthlySavings, expensePerMonth);
+                    if ((incomePerMonth + monthlySavings) > expensePerMonth) {
                         monthlySavings += (incomePerMonth - expensePerMonth - healthFactor);
+                        monthlySavingsWithHouse += (incomePerMonth - expensePerMonth - healthFactor);
                     } else {
-                        monthlySavings += (monthlySavings + incomePerMonth - expensePerMonth - healthFactor);
+                        console.log(year, month, incomePerMonth + monthlySavings, expensePerMonth);
+
+                        if (flagB) {
+                            document.getElementById('bankruptatAge').textContent = '' + year;
+                            flagB -= 1
+                        }
+                        monthlySavings += incomePerMonth - expensePerMonth - healthFactor;
+                        console.log('Retirement not feasible');
+                        monthlySavingsWithHouse += incomePerMonth - expensePerMonth - healthFactor;
+
                     }
-                    console.log('Retirement not feasible');
-                    // return;
+                } else if (year == retirementAge) {
+                    if (monthlySavings > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12 - taxDeductHouse / 12)) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
 
-                }
-            } else if (year == retirementAge) {
-                document.getElementById('savingsAtRetirement').textContent = '$' + monthlySavings.toFixed(2);
-                if (monthlySavings * savingsInterestRate * 0.9 / 12 > healthFactor + expensePerMonth) {
-                    monthlySavings += ((monthlySavings * savingsInterestRate * 0.9 / 12) - healthFactor - expensePerMonth);
-                } else {
-                    monthlySavings -= healthFactor + expensePerMonth
-                }
+                    document.getElementById('savingsAtRetirement').textContent = '$' + monthlySavings.toFixed(2);
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavings += (incomePerMonth - healthFactor - expensePerMonth);
+                        monthlySavingsWithHouse += (incomePerMonth - healthFactor - expensePerMonth);
+                    } else {
+                        monthlySavings -= healthFactor + expensePerMonth
+                        monthlySavingsWithHouse -= healthFactor + expensePerMonth;
+                    }
 
-            } else if (year <= 100) {
-                // console.log(monthlySavings * savingsInterestRate * 0.9 / 12);
-                if (monthlySavings * savingsInterestRate * 0.9 / 12 > healthFactor + expensePerMonth) {
-                    monthlySavings += ((monthlySavings * savingsInterestRate * 0.9 / 12) - healthFactor - expensePerMonth);
-                } else {
-                    monthlySavings -= healthFactor + expensePerMonth
+                } else if (year > retirementAge) {
+                    if (monthlySavings > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12) - taxDeductHouse / 12) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
+
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavings += incomePerMonth - healthFactor - expensePerMonth;
+                        monthlySavingsWithHouse += incomePerMonth - healthFactor - expensePerMonth;
+                    } else {
+                        monthlySavings -= healthFactor + expensePerMonth
+                        monthlySavingsWithHouse -= healthFactor + expensePerMonth;
+                    }
                 }
             }
+            console.log(year, monthlySavings)
 
-
-            monthfinancialSituation.push({
+            yearfinancialSituation.push({
                 year: year,
-                month: month,
                 savings: monthlySavings
             });
+
+            yearfinancialSituationWithHouse.push({
+                year: year,
+                savings: monthlySavingsWithHouse
+            });
+
         }
-        yearfinancialSituation.push({
-            year: year,
-            savings: monthlySavings
-        });
+        monthlySavingsC = currentSavings;
 
+        flagC = 1
+        for (let year = currentAge; year <= 100; year++) {
+            let incomePerMonth;
+            let expensePerMonth;
+
+            for (let month = 1; month <= 12; month++) {
+                //Expense Calculation
+                let monthlyExpenseAfterInflation = monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge) * 12 + month);
+                expensePerMonth = monthlyExpenseAfterInflation + +monthlyRentalExpenses + healthFactor;
+                if (month == 12) {
+                    expensePerMonth += yearlyTravelExpenses;
+                }
+                //Income Calculation
+                if (year < retirementAge) {
+                    incomePerMonth = calculateTotalTax((monthlyIncome * Math.pow((1 + salaryIncreaseRate / 12), (year - currentAge) * 12 + month)) + (monthlySavingsC * savingsInterestRate - expensePerMonth) / 12) / 12;
+
+                    if ((incomePerMonth + monthlySavingsC) > expensePerMonth) {
+                        monthlySavingsC += (incomePerMonth - expensePerMonth - healthFactor);
+                    } else {
+                        // console.log(year, month, incomePerMonth + monthlySavingsC, expensePerMonth);
+
+                        if (flagC) {
+                            document.getElementById('bankruptatAgeWithoutHouse').textContent = '' + year;
+                            flagC -= 1
+                        }
+                        monthlySavingsC += incomePerMonth - expensePerMonth - healthFactor;
+                        console.log('Retirement not feasible');
+
+                    }
+                } else if (year == retirementAge) {
+                    if (monthlySavingsC > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavingsC * savingsInterestRate - expensePerMonth) / 12)) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
+
+                    document.getElementById('savingsAtRetirementWithoutHouse').textContent = '$' + monthlySavingsC.toFixed(2);
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavingsC += (incomePerMonth - healthFactor - expensePerMonth);
+                    } else {
+                        monthlySavingsC -= healthFactor + expensePerMonth
+                    }
+
+                } else if (year > retirementAge) {
+                    if (monthlySavingsC > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavingsC * savingsInterestRate - expensePerMonth) / 12)) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
+
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavingsC += (incomePerMonth - healthFactor - expensePerMonth);
+                    } else {
+                        monthlySavingsC -= healthFactor + expensePerMonth
+                    }
+                }
+            }
+            // console.log(year, monthlySavingsC)
+
+            yearfinancialwithoutHouseSituation.push({
+                year: year,
+                savings: monthlySavingsC
+            });
+
+        }
+        // console.log(yearfinancialSituation, yearfinancialwithoutHouseSituation, yearfinancialSituationWithHouse);
+        update3Chart(yearfinancialSituation, yearfinancialwithoutHouseSituation, yearfinancialSituationWithHouse);
+    } else {
+
+        monthlySavings = currentSavings;
+
+        flagC = 1
+        for (let year = currentAge; year <= 100; year++) {
+            let incomePerMonth;
+            let expensePerMonth;
+
+            for (let month = 1; month <= 12; month++) {
+                //Expense Calculation
+                let monthlyExpenseAfterInflation = monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge) * 12 + month);
+                expensePerMonth = monthlyExpenseAfterInflation + +monthlyRentalExpenses + healthFactor;
+                if (month == 12) {
+                    expensePerMonth += yearlyTravelExpenses;
+                }
+                //Income Calculation
+                if (year < retirementAge) {
+                    incomePerMonth = calculateTotalTax((monthlyIncome * Math.pow((1 + salaryIncreaseRate / 12), (year - currentAge) * 12 + month)) + (monthlySavings * savingsInterestRate - expensePerMonth) / 12) / 12;
+
+                    if ((incomePerMonth + monthlySavings) > expensePerMonth) {
+                        monthlySavings += (incomePerMonth - expensePerMonth - healthFactor);
+                    } else {
+                        // console.log(year, month, incomePerMonth + monthlySavings, expensePerMonth);
+
+                        if (flagC) {
+                            document.getElementById('bankruptatAgeWithoutHouse').textContent = '' + year;
+                            flagC -= 1
+                        }
+                        monthlySavings += incomePerMonth - expensePerMonth - healthFactor;
+                        console.log('Retirement not feasible');
+
+                    }
+                } else if (year == retirementAge) {
+                    if (monthlySavings > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12)) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
+
+                    document.getElementById('savingsAtRetirementWithoutHouse').textContent = '$' + monthlySavings.toFixed(2);
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavings += (incomePerMonth - healthFactor - expensePerMonth);
+                    } else {
+                        monthlySavings -= healthFactor + expensePerMonth
+                    }
+
+                } else if (year > retirementAge) {
+                    if (monthlySavings > 0) {
+                        incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12)) / 12;
+                    } else {
+                        incomePerMonth = 0;
+                    }
+
+                    if (incomePerMonth > healthFactor + expensePerMonth) {
+                        monthlySavings += (incomePerMonth - healthFactor - expensePerMonth);
+                    } else {
+                        monthlySavings -= healthFactor + expensePerMonth
+                    }
+                }
+            }
+            // console.log(year, monthlySavings)
+
+            yearfinancialwithoutHouseSituation.push({
+                year: year,
+                savings: monthlySavings
+            });
+
+        }
+        updateChart(yearfinancialwithoutHouseSituation);
     }
-
-
-    console.log(yearfinancialSituation);
-    // updatemonthChart(monthfinancialSituation)
-    updateChart(yearfinancialSituation);
 }
+// function calculateFinancialSituation() {
+
+
+//     const currentAge = parseInt(document.getElementById("currentAge").value);
+//     const retirementAge = parseInt(document.getElementById("retirementAge").value);
+//     // const housePrice = parseFloat(document.getElementById("housePrice").value);
+//     // const downPayment = parseFloat(document.getElementById("houseDownPayment").value);
+//     // const mortgageRate = parseFloat(document.getElementById("mortgageRate").value) / 100;
+//     // const mortgageTerm = parseFloat(document.getElementById("mortgageTerm").value);
+//     const monthlyIncome = parseFloat(document.getElementById("monthlyIncome").value);
+//     // const taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
+
+//     const salaryIncreaseRate = parseFloat(document.getElementById("salaryIncreaseRate").value) / 100;
+//     const monthlyExpenses = parseFloat(document.getElementById("monthlyExpenses").value);
+//     const monthlyRentalExpenses = parseFloat(document.getElementById("monthlyRentalExpenses").value);
+//     const yearlyTravelExpenses = parseFloat(document.getElementById("yearlyTravelExpenses").value);
+
+//     const inflationRate = parseFloat(document.getElementById("inflationRate").value) / 100;
+//     const currentSavings = parseFloat(document.getElementById("currentSavings").value);
+//     const savingsInterestRate = parseFloat(document.getElementById("savingsInterestRate").value) / 100;
+//     const healthFactor = parseFloat(document.getElementById("healthFactor").value);
+//     // const houseBuyingAge = parseInt(document.getElementById("houseBuyingAge").value);
+
+//     const buyHouseCheckbox = document.getElementById("buyHouseCheckbox");
+
+//     // const taxStatus = document.getElementById('taxStatus').value;
+//     // const taxPlace = document.getElementById('taxPlace').value;
+
+
+//     if (buyHouseCheckbox.checked) {
+//         housePrice = parseFloat(document.getElementById("housePrice").value);
+//         downPayment = parseFloat(document.getElementById("houseDownPayment").value) / 100;
+//         mortgageRate = parseFloat(document.getElementById("mortgageRate").value) / 100;
+//         mortgageTerm = parseFloat(document.getElementById("mortgageTerm").value);
+//         houseBuyingAge = parseInt(document.getElementById("houseBuyingAge").value);
+
+//     } else {
+//         housePrice = 0;
+//         downPayment = 0;
+//         mortgageRate = 0;
+//         mortgageTerm = 0;
+//         houseBuyingAge = 0;
+//     }
+
+//     console.log("Current Age:", currentAge);
+//     console.log("Retirement Age:", retirementAge);
+//     console.log("Place:", taxPlace);
+
+//     console.log("House Price:", housePrice);
+//     console.log("Down Payment:", downPayment);
+//     console.log("Mortgage Rate:", mortgageRate);
+//     console.log("Mortgage Term:", mortgageTerm);
+//     console.log("Monthly Income:", monthlyIncome);
+//     console.log("Salary Increase Rate:", salaryIncreaseRate);
+//     console.log("Monthly Expenses:", monthlyExpenses);
+//     console.log("Inflation Rate:", inflationRate);
+//     console.log("Current Savings:", currentSavings);
+//     console.log("Savings Interest Rate:", savingsInterestRate);
+//     console.log("Health Factor:", healthFactor);
+//     console.log("House Buying Age:", houseBuyingAge);
+
+
+//     let monthlySavings = currentSavings;
+//     let monthfinancialSituation = [];
+//     let yearfinancialSituation = [];
+//     const mortgageEndYear = houseBuyingAge + mortgageTerm;
+
+//     let mortgageTermMonths = mortgageTerm * 12;
+//     let principal = housePrice * (1 - downPayment);
+//     let monthlyInterestRate = mortgageRate / 12;
+//     let monthinflationRate = inflationRate / 12
+//     let HouseProperty = housePrice > 1000000 ? housePrice - 1000000 : 0
+//     let HOAandInsurance = 1000
+//     // let taxDeducted = monthlyIncome;
+//     flagB = 1
+//     for (let year = currentAge; year <= 100; year++) {
+//         let mortgagePaidPerMonth = 0;
+//         let incomePerMonth;
+//         let expensePerMonth;
+
+//         if (year >= houseBuyingAge && year < mortgageEndYear) {
+//             mortgagePaidPerMonth = principal * (monthlyInterestRate * Math.pow((1 + monthlyInterestRate), mortgageTermMonths)) / (Math.pow((1 + monthlyInterestRate), mortgageTermMonths) - 1);
+
+//             expensePerMonth = (monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge))) + mortgagePaidPerMonth + housePrice * 0.01 + HOAandInsurance
+
+//         } else {
+//             expensePerMonth = (monthlyExpenses * Math.pow((1 + monthinflationRate), (year - currentAge))) + mortgagePaidPerMonth + monthlyRentalExpenses;
+//             mortgagePaidPerMonth = 0;
+//         }
+
+//         for (let month = 1; month <= 12; month++) {
+
+//             // console.log(year, mortgagePaidPerMonth, expensePerMonth, incomePerMonth, monthlySavings);
+//             if (month == 12) {
+//                 expensePerMonth += yearlyTravelExpenses;
+//             }
+
+//             if (year < retirementAge) {
+//                 incomePerMonth = (calculateTotalTax((monthlyIncome * Math.pow((1 + salaryIncreaseRate), (year - currentAge))) + (monthlySavings * savingsInterestRate - expensePerMonth) / 12 + hou)) / 12;
+
+//                 if (year == houseBuyingAge && month == 1) {
+//                     // console.log(housePrice * downPayment,);
+//                     if (incomePerMonth > housePrice * downPayment) {
+//                         incomePerMonth -= housePrice * downPayment
+//                     } else if (incomePerMonth + monthlySavings > housePrice * downPayment) {
+//                         monthlySavings -= (housePrice * downPayment - incomePerMonth)
+//                         incomePerMonth = 0
+//                     };
+//                 }
+
+//                 let boolSoso = (incomePerMonth + monthlySavings) > expensePerMonth;
+//                 let boolNo = (incomePerMonth + monthlySavings) < expensePerMonth;
+//                 // console.log(year, boolSoso, boolNo);
+//                 if (boolSoso) {
+//                     monthlySavings += (incomePerMonth - expensePerMonth - healthFactor);
+//                 } else if (boolNo) {
+//                     // console.log(year, flagB);
+//                     if (flagB) {
+//                         // console.log(year, flagB);
+//                         document.getElementById('bankruptatAge').textContent = '' + year;
+//                         flagB -= 1
+//                     }
+//                     // console.log(year, month, expensePerMonth, mortgagePaidPerMonth, incomePerMonth, monthlySavings);
+//                     monthlySavings += (incomePerMonth - expensePerMonth - healthFactor);
+//                     console.log('Retirement not feasible');
+//                     // return;
+
+//                 }
+//             } else if (year == retirementAge) {
+//                 if (monthlySavings > 0) {
+//                     incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12)) / 12;
+//                 } else {
+//                     incomePerMonth = 0;
+//                 }
+
+//                 document.getElementById('savingsAtRetirement').textContent = '$' + monthlySavings.toFixed(2);
+//                 if (incomePerMonth > healthFactor + expensePerMonth) {
+//                     monthlySavings += (incomePerMonth - healthFactor - expensePerMonth);
+//                 } else {
+//                     monthlySavings -= healthFactor + expensePerMonth
+//                 }
+
+//             } else if (year > retirementAge) {
+//                 if (monthlySavings > 0) {
+//                     incomePerMonth = (calculateTotalTax((monthlySavings * savingsInterestRate - expensePerMonth) / 12)) / 12;
+//                 } else {
+//                     incomePerMonth = 0;
+//                 }
+
+//                 // console.log(monthlySavings * savingsInterestRate * 0.9 / 12);
+//                 if (incomePerMonth > healthFactor + expensePerMonth) {
+//                     monthlySavings += (incomePerMonth - healthFactor - expensePerMonth);
+//                 } else {
+//                     monthlySavings -= healthFactor + expensePerMonth
+//                 }
+//             }
+
+//             monthfinancialSituation.push({
+//                 year: year,
+//                 month: month,
+//                 savings: monthlySavings
+//             });
+//         }
+//         yearfinancialSituation.push({
+//             year: year,
+//             savings: monthlySavings
+//         });
+
+//     }
+
+
+//     console.log(yearfinancialSituation);
+//     // updatemonthChart(monthfinancialSituation)
+//     updateChart(yearfinancialSituation);
+// }
+// function updatemonthChart(financialSituation) {
+//     var ctx = document.getElementById('savingsmonthChart').getContext('2d');
+
+//     var labels = financialSituation.map(function (item) {
+//         return "Age " + item.year;
+//     });
+
+//     var data = financialSituation.map(function (item) {
+//         return item.savings;
+//     });
+
+
+//     if (window.mySavingsChart) {
+//         window.mySavingsChart.destroy();
+//     }
+
+//     window.mySavingsChart = new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//             labels: labels,
+//             datasets: [{
+//                 label: 'Total Savings Over Time',
+//                 data: data,
+//                 fill: false,
+//                 borderColor: 'rgb(118, 15, 246)',
+//                 tension: 0.1
+//             }]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true,
+//                     title: {
+//                         display: true,
+//                         text: 'Savings ($)'
+//                     }
+//                 },
+//                 x: {
+//                     title: {
+//                         display: true,
+//                         text: 'Age'
+//                     }
+//                 }
+//             },
+//             responsive: true,
+//             maintainAspectRatio: true
+//         }
+//     });
+// }
