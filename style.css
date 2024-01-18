@@ -151,7 +151,7 @@ select {
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
     .main-container {
         display: block;
@@ -161,18 +161,22 @@ select {
     }
 
     .container {
+        flex: 0 0 100% !important;
         width: 100%;
-
+        font-size: 14px;
+        padding: 10px;
     }
 
     .haha {
+        flex: 0 0 100%;
         width: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
     }
 
-
-    .container {
-        font-size: 14px;
-    }
 
     .input-group {
         flex-direction: column;
